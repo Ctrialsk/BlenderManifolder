@@ -144,8 +144,13 @@ def voxelRemesh( object):
 
 if __name__ == "__main__":
     clearScene()
+    
     filename_in = "/media/intd/docs/Documents/FRLNC/BlenderLogoScript/bethrawhead/model.obj"
+    filename_tool = "/media/intd/docs/Documents/FRLNC/BlenderLogoScript/bethrawhead/model_tool.obj"
+    filename_pre = "/media/intd/docs/Documents/FRLNC/BlenderLogoScript/bethrawhead/model_pre.obj"
     filename_out = "/media/intd/docs/Documents/FRLNC/BlenderLogoScript/bethrawhead/model_out.obj"
+    
+    #preparing the tool geometry
     importModel(filename_in)
     
     for obj in bpy.data.objects:
@@ -171,4 +176,92 @@ if __name__ == "__main__":
     generateCuttingCylinder(cylinderCenterCutout, 0.05, 0.1)
     performCylinderCutout()
     
+    exportModel(workObject, filename_tool)
+    
+    clearScene()
+    
+    #now preparing the pre out geometry
+    clearScene()
+    
+    importModel(filename_in)
+    
+    for obj in bpy.data.objects:
+        if obj.name.startswith("model"):
+            obj.name = "model"
+    
+    workObject = bpy.data.objects['model']
+    
+    dim = getObjectDimensions(workObject)
+    loc = getObjectLocation(workObject)           
+    
+    baseLocation = (loc[0], loc[1], loc[2] - 0.5 * dim[2])
+    generateInclinedPlane( baseLocation)
+    cylinderCenterCutout = elongateNeckPart( baseLocation)
+    
+    print("CYL LOC : " + str(cylinderCenterCutout[0]) + "; " + 
+                         str(cylinderCenterCutout[1]) + "; " + 
+                         str(cylinderCenterCutout[2]))    
+    
+    createSectionCube( baseLocation)
+    performNeckCutout()
+    #voxelRemesh( workObject)
+    generateCuttingCylinder(cylinderCenterCutout, 0.05, 0.1)
+    performCylinderCutout()
+    
+    exportModel(workObject, filename_pre)
+    
+    #now transfering the UVs
+    clearScene()
+    
+    importModel(filename_pre)
+    bpy.ops.transform.resize(value=(1.005, 1.005, 1.005))
+    
+    importModel(filename_tool)
+    
+    '''i = 0
+    for obj in bpy.data.objects:
+        if i == 0
+        obj.name = "model"
+    
+    dataTransferModif = workObject.modifiers.new( type = "DATA_TRANSFER", 
+                                                  name = "data_transfer_mod")
+    dataTransderModif.'''
+    
+    
+    #toolObject = bpy.data.objects['model.002']
+    
+    #boolOperationDif = workObject.modifiers.new( type = "BOOLEAN", 
+    #                                             name = "bool_unite")
+    #boolOperationDif.object = toolObject
+    #boolOperationDif.operation = 'UNION'
+    
+    #bpy.ops.object.modifier_apply(modifier = "bool_unite")
+    
+    #exportModel(workObject, filename_out)
+    #clearScene()'''
+    '''importModel(filename_out)
+    
+    for obj in bpy.data.objects:
+        if obj.name.startswith("model"):
+            obj.name = "model"
+    
+    workObject = bpy.data.objects['model']
+    
+    dim = getObjectDimensions(workObject)
+    loc = getObjectLocation(workObject)           
+    
+    baseLocation = (loc[0], loc[1], loc[2] - 0.5 * dim[2])
+    generateInclinedPlane( baseLocation)
+    cylinderCenterCutout = elongateNeckPart( baseLocation)
+    
+    createSectionCube( baseLocation)
+    performNeckCutout()
+    voxelRemesh( workObject)
+    generateCuttingCylinder(cylinderCenterCutout, 0.05, 0.1)
+    performCylinderCutout()
+    
     exportModel(workObject, filename_out)
+    
+    #bpy.context.scene.objects.
+    
+    #exportModel(workObject, filename_out)'''
